@@ -1,0 +1,176 @@
+---
+swagger: "2.0"
+info:
+
+  version: "1.0"
+  title: "Каталог музыки"
+
+host: "localhost:8080"
+basePath: "/v1"
+tags:
+- name: "Треки"
+  description: "Операции с треками."
+
+- name: "Альбомы"
+  description: "Операции с альбомами."
+
+- name: "Страны"
+  description: "Операции со странами."
+
+- name: "Лейблы"
+  description: "Операции с лейблами."
+
+- name: "Исполнители"
+  description: "Операции с исполнителями"
+
+schemes:
+- "http"
+
+paths:
+  /tracks:
+    get:
+      tags:
+        - "Треки"
+      summary: "Возвращает все треки из сервиса с включенной пагинацией"
+      parameters:
+
+        - name: "start"
+          description: "С какой записи начать вывод. Начало по умолчанию с 0."
+          in: "query"
+          type: "integer"
+          format: "int64"
+          default: 0
+
+        - name: "limit"
+          description: "Как много записей вернуть. Значение должно быть меньше 20. Значение по умолчанию 10."
+          in: "query"
+          type: "integer"
+          format: "int32"
+          default: 10
+          maximum: 20
+
+        - name: "sort"
+          description: "По какому значению сортировать записи."
+          in: "query"
+          type: "string"
+          enum:
+          - "byDateInc"
+          - "byDateDesc"
+
+      produces:
+        - application/json
+      responses:
+        200:
+          description: "Правильный ответ."
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Track"
+        404:
+          description: "Not found."
+    post:
+      tags:
+        - "Треки"
+      summary: "Добавляет трек в сервис."
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: "body"
+          name: "body"
+          required: true
+          description: "Payload data."
+          schema:
+            $ref: "#/definitions/Track"
+      responses:
+        200:
+          description: "Success response."
+        404:
+          description: "Not found"
+    put:
+      tags:
+        - "Треки"
+      summary: "Обновляет трек в сервисе."
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: "body"
+          name: "body"
+          required: true
+          description: "Payload data."
+          schema:
+            $ref: "#/definitions/Track"
+      responses:
+        200:
+          description: "Success response."
+        404:
+          description: "Not found."
+
+definitions:
+  Track:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+      title:
+        type: "string"
+        example: "Never gonna give you up"
+      albumId:
+        type: "integer"
+        format: "int64"
+      listens:
+        type: "integer"
+        format: "int64"
+      favorites:
+        type: "integer"
+        format: "int64"
+      length:
+        type: "integer"
+        format: "int64"
+  Artist:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+      name:
+        type: "string"
+        example: "Rick"
+      surname:
+        type: "string"
+        example: "Astley"
+      dateOfBirth:
+        type: "string"
+        format: "date-time"
+        example: "1966-02-06"
+      countryId:
+        type: "integer"
+        format: "int64"
+  Label:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+      name:
+        type: "string"
+  Album:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+      name:
+        type: "string"
+  Country:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+      name:
+        type: "string"
