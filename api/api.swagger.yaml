@@ -1,39 +1,38 @@
 ---
 swagger: "2.0"
 info:
-
-  version: "1.0"
+  version: "0.0.1"
   title: "Каталог музыки"
 
 host: "localhost:8080"
 basePath: "/v1"
 tags:
-- name: "Треки"
-  description: "Операции с треками."
+  - name: "Треки"
+    description: "Операции с треками."
 
-- name: "Альбомы"
-  description: "Операции с альбомами."
+  - name: "Альбомы"
+    description: "Операции с альбомами."
 
-- name: "Страны"
-  description: "Операции со странами."
+  - name: "Страны"
+    description: "Операции со странами."
 
-- name: "Лейблы"
-  description: "Операции с лейблами."
+  - name: "Лейблы"
+    description: "Операции с лейблами."
 
-- name: "Исполнители"
-  description: "Операции с исполнителями"
+  - name: "Исполнители"
+    description: "Операции с исполнителями"
 
 schemes:
-- "http"
+  - "http"
 
 paths:
-  /tracks:
+  # -- Track specific paths
+  /track:
     get:
       tags:
         - "Треки"
       summary: "Возвращает все треки из сервиса с включенной пагинацией"
       parameters:
-
         - name: "start"
           description: "С какой записи начать вывод. Начало по умолчанию с 0."
           in: "query"
@@ -54,14 +53,14 @@ paths:
           in: "query"
           type: "string"
           enum:
-          - "byDateInc"
-          - "byDateDesc"
+            - "byDateInc"
+            - "byDateDesc"
 
       produces:
         - application/json
       responses:
         200:
-          description: "Правильный ответ."
+          description: "Successful response."
           schema:
             type: "array"
             items:
@@ -85,7 +84,7 @@ paths:
             $ref: "#/definitions/Track"
       responses:
         200:
-          description: "Success response."
+          description: "Successful response."
         404:
           description: "Not found"
     put:
@@ -105,10 +104,509 @@ paths:
             $ref: "#/definitions/Track"
       responses:
         200:
-          description: "Success response."
+          description: "Successful response."
+        404:
+          description: "Not found."
+  /track/{id}:
+    get:
+      tags:
+        - "Треки"
+      summary: "Получает конкретный трек из сервиса по ID."
+      parameters:
+        - name: "id"
+          required: true
+          in: "path"
+          type: "integer"
+          format: "int64"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: "Successful response."
+          schema:
+            $ref: "#/definitions/Track"
+        404:
+          description: "Not found."
+    delete:
+      tags:
+        - "Треки"
+      summary: "Удаляет конкретный трек из сервиса по ID."
+      parameters:
+        - name: "id"
+          required: true
+          in: "path"
+          type: "integer"
+          format: "int64"
+      responses:
+        200:
+          description: "Successful response."
+        404:
+          description: "Not found."
+  # -- Artist specific paths
+  /artist:
+    get:
+      tags:
+        - "Исполнители"
+      summary: "Возвращает всех исполнителей из сервиса с включенной пагинацией"
+      parameters:
+        - name: "start"
+          description: "С какой записи начать вывод. Начало по умолчанию с 0."
+          in: "query"
+          type: "integer"
+          format: "int64"
+          default: 0
+
+        - name: "limit"
+          description: "Как много записей вернуть. Значение должно быть меньше 20. Значение по умолчанию 10."
+          in: "query"
+          type: "integer"
+          format: "int32"
+          default: 10
+          maximum: 20
+
+        - name: "sort"
+          description: "По какому значению сортировать записи."
+          in: "query"
+          type: "string"
+          enum:
+            - "byDateInc"
+            - "byDateDesc"
+
+      produces:
+        - application/json
+      responses:
+        200:
+          description: "Successful response."
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Artist"
+        404:
+          description: "Not found."
+    post:
+      tags:
+        - "Исполнители"
+      summary: "Добавляет исполнителя в сервис."
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: "body"
+          name: "body"
+          required: true
+          description: "Payload data."
+          schema:
+            $ref: "#/definitions/Artist"
+      responses:
+        200:
+          description: "Successful response."
+        404:
+          description: "Not found"
+    put:
+      tags:
+        - "Исполнители"
+      summary: "Обновляет исполнителя в сервисе."
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: "body"
+          name: "body"
+          required: true
+          description: "Payload data."
+          schema:
+            $ref: "#/definitions/Artist"
+      responses:
+        200:
+          description: "Successful response."
+        404:
+          description: "Not found."
+  /artist/{id}:
+    get:
+      tags:
+        - "Исполнители"
+      summary: "Получает конкретного исполнителя из сервиса по ID."
+      parameters:
+        - name: "id"
+          required: true
+          in: "path"
+          type: "integer"
+          format: "int64"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: "Successful response."
+          schema:
+            $ref: "#/definitions/Artist"
+        404:
+          description: "Not found."
+    delete:
+      tags:
+        - "Исполнители"
+      summary: "Удаляет конкретного исполнителя из сервиса по ID."
+      parameters:
+        - name: "id"
+          required: true
+          in: "path"
+          type: "integer"
+          format: "int64"
+      responses:
+        200:
+          description: "Successful response."
+        404:
+          description: "Not found."
+  # -- Label specific paths
+  /label:
+    get:
+      tags:
+        - "Лейблы"
+      summary: "Возвращает все лейблы из сервиса с включенной пагинацией"
+      parameters:
+        - name: "start"
+          description: "С какой записи начать вывод. Начало по умолчанию с 0."
+          in: "query"
+          type: "integer"
+          format: "int64"
+          default: 0
+
+        - name: "limit"
+          description: "Как много записей вернуть. Значение должно быть меньше 20. Значение по умолчанию 10."
+          in: "query"
+          type: "integer"
+          format: "int32"
+          default: 10
+          maximum: 20
+
+        - name: "sort"
+          description: "По какому значению сортировать записи."
+          in: "query"
+          type: "string"
+          enum:
+            - "byDateInc"
+            - "byDateDesc"
+
+      produces:
+        - application/json
+      responses:
+        200:
+          description: "Successful response."
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Label"
+        404:
+          description: "Not found."
+    post:
+      tags:
+        - "Лейблы"
+      summary: "Добавляет лейбл в сервис."
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: "body"
+          name: "body"
+          required: true
+          description: "Payload data."
+          schema:
+            $ref: "#/definitions/Label"
+      responses:
+        200:
+          description: "Successful response."
+        404:
+          description: "Not found"
+    put:
+      tags:
+        - "Лейблы"
+      summary: "Обновляет лейбл в сервисе."
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: "body"
+          name: "body"
+          required: true
+          description: "Payload data."
+          schema:
+            $ref: "#/definitions/Label"
+      responses:
+        200:
+          description: "Successful response."
+        404:
+          description: "Not found."
+  /label/{id}:
+    get:
+      tags:
+        - "Лейблы"
+      summary: "Получает конкретный лейбл из сервиса по ID."
+      parameters:
+        - name: "id"
+          required: true
+          in: "path"
+          type: "integer"
+          format: "int64"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: "Successful response."
+          schema:
+            $ref: "#/definitions/Label"
+        404:
+          description: "Not found."
+    delete:
+      tags:
+        - "Лейблы"
+      summary: "Удаляет конкретный лейбл из сервиса по ID."
+      parameters:
+        - name: "id"
+          required: true
+          in: "path"
+          type: "integer"
+          format: "int64"
+      responses:
+        200:
+          description: "Successful response."
+        404:
+          description: "Not found."
+  # -- Album specific paths
+  /album:
+    get:
+      tags:
+        - "Альбомы"
+      summary: "Возвращает все альбомы из сервиса с включенной пагинацией"
+      parameters:
+        - name: "start"
+          description: "С какой записи начать вывод. Начало по умолчанию с 0."
+          in: "query"
+          type: "integer"
+          format: "int64"
+          default: 0
+
+        - name: "limit"
+          description: "Как много записей вернуть. Значение должно быть меньше 20. Значение по умолчанию 10."
+          in: "query"
+          type: "integer"
+          format: "int32"
+          default: 10
+          maximum: 20
+
+        - name: "sort"
+          description: "По какому значению сортировать записи."
+          in: "query"
+          type: "string"
+          enum:
+            - "byDateInc"
+            - "byDateDesc"
+
+      produces:
+        - application/json
+      responses:
+        200:
+          description: "Successful response."
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Album"
+        404:
+          description: "Not found."
+    post:
+      tags:
+        - "Альбомы"
+      summary: "Добавляет альбом в сервис."
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: "body"
+          name: "body"
+          required: true
+          description: "Payload data."
+          schema:
+            $ref: "#/definitions/Album"
+      responses:
+        200:
+          description: "Successful response."
+        404:
+          description: "Not found"
+    put:
+      tags:
+        - "Альбомы"
+      summary: "Обновляет альбом в сервисе."
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: "body"
+          name: "body"
+          required: true
+          description: "Payload data."
+          schema:
+            $ref: "#/definitions/Album"
+      responses:
+        200:
+          description: "Successful response."
+        404:
+          description: "Not found."
+  /album/{id}:
+    get:
+      tags:
+        - "Альбомы"
+      summary: "Получает конкретный альбом из сервиса по ID."
+      parameters:
+        - name: "id"
+          required: true
+          in: "path"
+          type: "integer"
+          format: "int64"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: "Successful response."
+          schema:
+            $ref: "#/definitions/Album"
+        404:
+          description: "Not found."
+    delete:
+      tags:
+        - "Альбомы"
+      summary: "Удаляет конкретный альбом из сервиса по ID."
+      parameters:
+        - name: "id"
+          required: true
+          in: "path"
+          type: "integer"
+          format: "int64"
+      responses:
+        200:
+          description: "Successful response."
         404:
           description: "Not found."
 
+  # -- Album specific paths
+  /country:
+    get:
+      tags:
+        - "Страны"
+      summary: "Возвращает все страны из сервиса с включенной пагинацией"
+      parameters:
+        - name: "start"
+          description: "С какой записи начать вывод. Начало по умолчанию с 0."
+          in: "query"
+          type: "integer"
+          format: "int64"
+          default: 0
+
+        - name: "limit"
+          description: "Как много записей вернуть. Значение должно быть меньше 20. Значение по умолчанию 10."
+          in: "query"
+          type: "integer"
+          format: "int32"
+          default: 10
+          maximum: 20
+
+        - name: "sort"
+          description: "По какому значению сортировать записи."
+          in: "query"
+          type: "string"
+          enum:
+            - "byDateInc"
+            - "byDateDesc"
+
+      produces:
+        - application/json
+      responses:
+        200:
+          description: "Successful response."
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Country"
+        404:
+          description: "Not found."
+    post:
+      tags:
+        - "Страны"
+      summary: "Добавляет страну в сервис."
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: "body"
+          name: "body"
+          required: true
+          description: "Payload data."
+          schema:
+            $ref: "#/definitions/Country"
+      responses:
+        200:
+          description: "Successful response."
+        404:
+          description: "Not found"
+    put:
+      tags:
+        - "Страны"
+      summary: "Обновляет страну в сервисе."
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: "body"
+          name: "body"
+          required: true
+          description: "Payload data."
+          schema:
+            $ref: "#/definitions/Country"
+      responses:
+        200:
+          description: "Successful response."
+        404:
+          description: "Not found."
+  /country/{id}:
+    get:
+      tags:
+        - "Страны"
+      summary: "Получает конкретный страну из сервиса по ID."
+      parameters:
+        - name: "id"
+          required: true
+          in: "path"
+          type: "integer"
+          format: "int64"
+      produces:
+        - application/json
+      responses:
+        200:
+          description: "Successful response."
+          schema:
+            $ref: "#/definitions/Country"
+        404:
+          description: "Not found."
+    delete:
+      tags:
+        - "Страны"
+      summary: "Удаляет конкретный страну из сервиса по ID."
+      parameters:
+        - name: "id"
+          required: true
+          in: "path"
+          type: "integer"
+          format: "int64"
+      responses:
+        200:
+          description: "Successful response."
+        404:
+          description: "Not found."
 definitions:
   Track:
     type: "object"
@@ -166,6 +664,12 @@ definitions:
         format: "int64"
       name:
         type: "string"
+      labelId:
+        type: "integer"
+        format: "int64"
+      releaseDate:
+        type: "string"
+        format: "date"
   Country:
     type: "object"
     properties:
